@@ -1,0 +1,13 @@
+  昨天开始学习ndk的开发，总结基本步骤如下
+    一 创建一个带有native方法的java类
+    
+    二 编译该java类 或得class文件
+    
+    三 使用javah -classpath claasName
+    
+    四 在安卓工程的根目录下创建一个jni的文件夹，并将三步骤生成的.h文件拷贝进去，并创建android.mk文件，最后将.h的方法实现放在一个
+.c文件中
+    
+    五 在工程根目录下使用ndkbulid命令交叉编译
+    
+    六 在Java类中添加一个static块加载该
