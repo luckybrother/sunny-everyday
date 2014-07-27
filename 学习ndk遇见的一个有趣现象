@@ -1,0 +1,25 @@
+代码如下
+  jstring JNICALL Java_com_example_ndkpassdata01_DateProvider_getString
+  (JNIEnv *env, jobject obj, jstring jstr){
+	char *cstr = Jstring2CStr(env,jstr);
+	LOGD("cstr=%s",cstr);
+	char arr[5]="hello";
+	LOGD("arr=%s",arr);
+	strcat(cstr,arr);
+	LOGD("new cstr=%s",cstr);
+	return (*env)->NewStringUTF(env,cstr);
+}
+
+
+  在安卓应用程序中调用该函数  有时候该应用程序会直接终止，并且没有任何提示。
+  
+  
+  
+  
+  问题分析：
+      在ndk开发中，如果访问了不该访问的内存空间，应用程序就会无任何提示的挂掉。
+      而在该代码中 我们可以看到
+      
+      char arr[5]="hello"  
+      在该行代码中我们没有指定终结符，如实改为
+      char arr[6]="hello\0"  将不会出现上述问题
