@@ -1,0 +1,4 @@
+   Android中实现view的更新有两组方法，一组是invalidate，另一组是postInvalidate，其中前者是在UI线程自身中使用，
+而后者在非UI线程中使用。
+   一般使用invalidata（）方法都是在handler里面
+   在系统的源代码中postInvalidate 也是使用到了handler。
