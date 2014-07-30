@@ -1,0 +1,181 @@
+package com.example.MySurfaceVIew;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.WindowManager;
+
+import com.example.mysnow.R;
+
+public class SnowView extends SurfaceView implements SurfaceHolder.Callback{
+	
+	private SurfaceHolder hodler;
+	Random random;
+	Canvas canvas ;
+	
+	
+	private int screenHeiht;
+	private int screenWidth;
+	//five kinds of snow
+	private Bitmap bitmapSnow[] =new Bitmap[5];
+	private Bitmap backg;
+	//the list for each kind of snow
+	
+	private List<Snow> lSnowList = new ArrayList<Snow>();
+	private List<Snow> mSnowList = new ArrayList<Snow>();
+	private List<Snow> sSnowList = new ArrayList<Snow>();
+	private List<Snow> xlSnowList = new ArrayList<Snow>();
+	private List<Snow> xxlSnowList = new ArrayList<Snow>();
+	private boolean isRunning = true; 
+	public SnowView(Context context) {
+		super(context);
+		init();
+	}
+
+	public SnowView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		// TODO Auto-generated constructor stub
+	}
+	/*
+	 * @Description init the surfaceView
+	 * */
+	private void init(){
+		hodler = getHolder();
+		hodler.addCallback(this);
+		hodler.setFormat(PixelFormat.RGBA_8888);
+		getViewSize(this.getContext());
+		LoadSnowImage();
+		
+		initSnow();
+	}
+	
+	/*
+	 * @Description  set the surfaceView's size
+	 * 
+	 * */
+	private void getViewSize(Context context) {
+		DisplayMetrics metrics = new DisplayMetrics();
+		WindowManager windowManager = (WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE);
+		windowManager.getDefaultDisplay().getMetrics(metrics);
+		this.screenHeiht = metrics.heightPixels;
+		this.screenWidth = metrics.widthPixels;
+	}
+	
+	private void LoadSnowImage() {
+		Resources rs = getResources();
+		bitmapSnow[0] = BitmapFactory.decodeResource(rs, R.drawable.snowflake_l);
+		bitmapSnow[1] = BitmapFactory.decodeResource(rs, R.drawable.snowflake_m);
+		bitmapSnow[2] = BitmapFactory.decodeResource(rs, R.drawable.snowflake_s);
+		bitmapSnow[3] = BitmapFactory.decodeResource(rs, R.drawable.snowflake_xl);
+		bitmapSnow[4] = BitmapFactory.decodeResource(rs, R.drawable.snowflake_xxl);
+		backg = BitmapFactory.decodeResource(rs, R.drawable.bg14_day_snow);
+	}
+	/*
+	 * init all the snow
+	 * */
+	private void initSnow(){
+		random = new Random();
+		for(int i=0;i<20;i++){
+			lSnowList.add(new Snow(bitmapSnow[0],random.nextInt(screenWidth),random.nextInt(screenHeiht),7,1-random.nextFloat()*2));
+			mSnowList.add(new Snow(bitmapSnow[1],random.nextInt(screenWidth),random.nextInt(screenHeiht),7,1-random.nextFloat()*2));
+			sSnowList.add(new Snow(bitmapSnow[2],random.nextInt(screenWidth),random.nextInt(screenHeiht),7,1-random.nextFloat()*2));
+			xlSnowList.add(new Snow(bitmapSnow[3],random.nextInt(screenWidth),random.nextInt(screenHeiht),7,1-random.nextFloat()*2));
+			xxlSnowList.add(new Snow(bitmapSnow[4],random.nextInt(screenWidth),random.nextInt(screenHeiht),7,1-random.nextFloat()*2));
+		}
+	}
+	
+	
+	
+	
+	private void drawSnow(){
+		Paint paint = new Paint();
+		RectF rectF = new RectF(0, 0, screenWidth, screenHeiht);
+		canvas.drawBitmap(backg, null,rectF, paint);
+		for(int i=0;i<20;i++){
+			Snow snow =lSnowList.get(i);
+			canvas.drawBitmap(bitmapSnow[0], snow.x, snow.y, paint);
+			snow =mSnowList.get(i);
+			canvas.drawBitmap(bitmapSnow[1], snow.x, snow.y, paint);
+			snow =sSnowList.get(i);
+			canvas.drawBitmap(bitmapSnow[2], snow.x, snow.y, paint);
+			snow =xlSnowList.get(i);
+			canvas.drawBitmap(bitmapSnow[3], snow.x, snow.y, paint);
+			snow =xxlSnowList.get(i);
+			canvas.drawBitmap(bitmapSnow[4], snow.x, snow.y, paint);
+		}
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+		
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder arg0) {
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+					while(isRunning){
+						canvas = hodler.lockCanvas();
+						try {
+							drawSnow();
+							for(int i=0;i<20;i++){
+								Snow snow =lSnowList.get(i);
+								snowDown(snow);
+								snow =mSnowList.get(i);
+								snowDown(snow);
+								snow =sSnowList.get(i);
+								snowDown(snow);
+								snow =xlSnowList.get(i);
+								snowDown(snow);
+								snow =xxlSnowList.get(i);
+								snowDown(snow);
+							}
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} finally{
+							if(canvas!=null){
+								hodler.unlockCanvasAndPost(canvas);
+							}
+							
+						}
+					}
+			}
+		}).start();
+	}
+	
+	
+	private void snowDown(Snow snow) {
+		// 雪花的落出屏幕后又让它从顶上下落
+		if (snow.x > screenWidth || snow.y > screenHeiht) {
+			snow.y = 0;
+			snow.x = random.nextFloat() * screenWidth;
+		}
+		snow.x += snow.offset;// 下落飘的偏移量
+		snow.y += snow.speed;// 下落的速度
+	}
+	@Override
+	public void surfaceDestroyed(SurfaceHolder arg0) {
+		isRunning = false;
+	}
+
+}
