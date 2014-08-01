@@ -1,0 +1,23 @@
+  重写onAttachedToWindow();
+
+public void onAttachedToWindow() {  
+  this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD);  
+  super.onAttachedToWindow();  
+} 
+
+然后重写onKeyDown即可
+public boolean onKeyDown(int keyCode, KeyEvent event) {  
+  if(keyCode == KeyEvent.KEYCODE_HOME) {  
+  //
+  }  
+  return super.onKeyDown(keyCode, event);  
+}  
+google 对onAttachedToWindow()的描述
+  This is called when the view is attached to a window. At this point it has a Surface and will start drawing. 
+  Note that this function is guaranteed to be called before View.onDraw(android.graphics.Canvas), however it may be 
+  called any time before the first onDraw -- including before or after View.onMeasure(int, int).
+  
+  
+  如果是屏蔽dialog风格的activity的home键功能的话
+  需setType(WindowManager.LayoutParams.TYPE_KEYGUARD_Dialog);  如若不然，dailog风格的activity背景色将变为黑色
+  
