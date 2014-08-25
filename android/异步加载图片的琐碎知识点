@@ -1,0 +1,22 @@
+ 今天在学习异步加载图片的时候，学习到了很多相关的琐碎知识点，这里我一一记录下来
+
+
+1 ExecuteService类
+      ExecuteService execute = Executes.newFixedThreadPool(5);
+      生成5个线程的缓存池循环使用，当线程60秒未使用时，将其移除线程池。
+      将图片的加载放在execute.submit()中实现。
+
+
+2 handler.post(new Runnable(){
+    @Override
+    public void run() {
+    //do something
+}});  //该方法可在一个非ui线程更改一个控件
+ 以下该方法也可达到该效果
+ 
+ view.post(new Runnable(){
+    @Override
+    public void run() {
+    //do something
+}});
+
