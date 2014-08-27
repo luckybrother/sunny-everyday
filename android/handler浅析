@@ -1,0 +1,50 @@
+   平日里只是简单的使用handler来处理ui的更改请求，但未深入学习。今日大概的分析一番
+   
+   若是在代码中使用
+        new Thread(new Runnable(){
+        
+            public void run(){
+              Handler handler = new Handler();
+            
+            }
+        
+        }).start();
+        
+  此时会抛出一个RuntimeExceotion 提示开发人员应先调用Looper.prepare()，此时就有疑问了，为什么在主线程不用调用Looper.prepare()
+  其实在主线程中已经调用过了。
+  
+
+系统源码如下：
+    class Looper{
+          //
+        static final ThreadLocal<Looper> sThreadLocal = new ThreadLocal(); 
+        ……
+        public static void prepare(){
+          prepare(true);
+        }
+        
+        provate static void  prepare(boolean quitAllowed){
+          if(sthreadLocal.get() !=null ){
+            throw new RuntimeException("only one looper may be created");
+          }
+          sthreadLocal.set(new Looper(quitAlloed));
+        }
+    
+    }
+    
+    sthreadLocal是ThreadLocal的一个实例,它是一个线程内信息存储访问的类。
+    根据这段代码我们便可知道若是在主线程中调用Looper.prepare()将会抛出异常
+    
+    
+    
+    再看handler类的部分源码
+    
+      public Handler(){
+        ……
+        mlooper = Looper.myLooper();
+        if(mlooper == null ){
+          throw new RuntimeException("");
+          
+        }
+        mqueue = mLooper.mqueue;
+      }
