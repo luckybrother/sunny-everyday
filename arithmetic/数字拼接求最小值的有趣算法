@@ -1,0 +1,47 @@
+  昨天晚上看了一道算法题，给一组数字 求能拼接出最小的数字。 如12 23 142 拼接后的值为 12 142 23
+  
+  具体算法如下
+  
+  public boolean comNum(String str1,String str2){
+		//将字符串转为字符数组
+		char char_array1[] = str1.toCharArray();   
+		char char_array2[] = str2.toCharArray();
+		//取得两个数组的长度
+		int char_array_length1 = char_array1.length;
+		int char_array_length2 = char_array2.length;
+		//却得较小的一个值
+		
+		
+		int i = 0;
+		
+		for(;i<char_array_length1&&i<char_array_length2;i++){
+				if(char_array1[i]>char_array2[i]){
+					return false;
+				}else if(char_array1[i]<char_array2[i]){
+					return true;
+				}
+			}
+		int comp_int =com(char_array_length1,char_array_length2);
+		
+		if(comp_int == 0){
+			return true;
+		}else if(comp_int ==1){
+			boolean result =comNum(str1.substring(i),str2);
+			
+			return result;
+		}else{
+			boolean result =comNum(str1,str2.substring(i));
+			
+			return result;
+		}
+	}
+	
+	public int com(int i, int j){
+		if(i>j){
+			return 1;
+		}else if(i==j){
+			return 0;
+		}else{
+			return -1;
+		}
+	}
