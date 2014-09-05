@@ -1,0 +1,22 @@
+     今天在做一个自定义控件的时候为其设置了onTouchEnvent,随后在使用该自定义控件的时候，又设置了onclick事件。于是出现了有趣的现象
+
+
+ontouchevent 中有三个事件(下面会忽略掉move)
+  up
+  move
+  down
+onLongClick 是一个事件
+  longClick
+onclick 是一个事件
+  click
+  
+  首先讨论第一种情况
+  1 未使用super的情况
+  无论ontouchEvent返回true 或者是false onlongclick与onclick都不会执行
+  ontouchEvent的返回值为false时 只触发down事件,true时up move down 都触发
+  
+  2 使用super
+     当down的返回值为false时，，无论长按还是短按都会触发onlongclick,但up与onclickbuhiu触发
+     当down的值为true时，他会监测是否有长按，若有，执行onlongclick,接着执行up。此时onclick的执行与onLongclick相关
+     若未长按或者onlongclick返回false，则会执行onlongClick 否则不会执行
+        
