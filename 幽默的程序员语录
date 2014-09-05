@@ -1,3 +1,0 @@
- 1   、Note that Linux, like UNIX, uses the colon (:) character to separate entries in the PATH variable, 
-rather than the semicolon (;) that MS-DOS and Windows use. (UNIX chose : first, so ask Microsoft why Windows is different,
-not why UNIX is different!)
